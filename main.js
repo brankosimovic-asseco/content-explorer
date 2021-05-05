@@ -126,7 +126,7 @@ async function getFolderItems(folder, levelChange) {
 
   $('.loader').css('display', 'initial');
 
-  let url = '';
+  let url = new URL('', baseUrl);
   // reset the current page in case we are on
   // a page that is > 1 and switch to a level
   // that has only one page.
@@ -136,14 +136,15 @@ async function getFolderItems(folder, levelChange) {
 
     if(!paths.includes(folder)) folder = '';
     paths = paths.slice(0, paths.indexOf(folder) + 1);
-    url = baseUrl + paths.join('/');
+    url.pathname = paths.join('/');
   } else {
 
     paths = (folder.path + (folder.path === '/' ? '' : '/') + folder.name).split('/');
-    url = baseUrl + paths.slice(1, paths.indexOf(folder.name) + 1).join('/');
+    url.pathname = paths.slice(1, paths.indexOf(folder.name) + 1).join('/');
   }
-
-  const response = await fetch(url + `?page-size=40&page=${currentPage}`);
+  url.searchParams.append('page-size', '40');
+  url.searchParams.append('page', currentPage.toString())
+  const response = await fetch(url.href);
   const data = await response.json();
 
   $('.loader').css('display', 'none');
