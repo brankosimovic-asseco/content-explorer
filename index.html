@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <header>Content Explorer</header>
+    <div style="display: flex; flex-direction: column; gap: 1rem">
+      <div style="display: flex; justify-content: flex-start">
+        <div class="breadcrumbz"></div>
+      </div>
+      <div class="navigation">
+        <img style="cursor:pointer" id="up" width="28" src="assets/up-arrow.svg" >
+        <div style="display:flex; gap: 0.5rem; align-items: center;" >
+          <img id="back-button" width="28" src="assets/prev-arrow.svg" alt="">
+          <span id="page-info">1/1</span> 
+          <img id="forward-button" width="28" src="assets/next-arrow.svg" >
+          
+        </div>
+        <img id="info" width="28" src="assets/info.svg" >
+        <img id="delete" width="28" src="assets/delete.svg" >
+        <img id="loader" class="loader" src="assets/loading.svg" width="28" alt="">
+      </div>
+      <div class="container">
+        
+      </div>
+      <div class="dialog">
+        <div class="dialog-content">
+          <h4 style="margin: 0.25rem;">Add additional info</h4>
+          <input id="filling-purpose" placeholder="Filing purpose" type="text">
+          <input id="filling-case-number" placeholder="Filing case number" type="text">
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="upload">Upload</button>
+            <button id="close-upload">Close</button>
+          </div>
+
+        </div>
+
+      </div>
+
+      </div>
+    </div>
+   
+    <img class="upload-button" src="assets/upload.svg" width="48px" alt="">
+  </body>
+  <input type="file" hidden id="upload-field">
+</html>
