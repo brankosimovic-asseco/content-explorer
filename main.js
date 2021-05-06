@@ -139,7 +139,6 @@ async function getFolderItems(folder, levelChange) {
     paths = paths.slice(0, paths.indexOf(folder) + 1);
     url.pathname += paths.join('/');
   } else {
-
     paths = (folder.path + (folder.path === '/' ? '' : '/') + folder.name).split('/');
     url.pathname += paths.slice(1, paths.indexOf(folder.name) + 1).join('/');
   }
