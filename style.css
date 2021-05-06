@@ -84,11 +84,16 @@ header {
 .download-button {
     cursor: pointer;
     filter:opacity(0);
-    transition: filter ease-in 250ms;
-    position: fixed;
-    /* top: 3rem; */
+    transition: all 1s ease-in-out; 
+    position: absolute;
     margin-top: 0.75rem;
 }
+
+.download-button:hover {
+    filter: opacity(1);
+    filter: drop-shadow(0 0 0.25rem rgba(0, 0, 0, 0.5));
+}
+
 
 
 @keyframes loader {
@@ -110,15 +115,12 @@ header {
     animation: loader 2s linear infinite;
 }
 
-.download-button:hover {
-    filter: opacity(1);
-    filter: drop-shadow(0 0 0.25rem rgba(0, 0, 0, 0.5));
-}
 
 .upload-button {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
+    
     cursor: pointer;
 }
 
@@ -133,7 +135,7 @@ header {
 
 .upload-button:hover{
     animation: loader 800ms ease-in-out;
-    /*box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;*/
+    filter: drop-shadow(0 0 0.25rem rgba(0, 0, 0, 0.5));
 }
 
 

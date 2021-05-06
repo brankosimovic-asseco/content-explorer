@@ -1,4 +1,5 @@
-let baseUrl = 'http://demo.dbranch.asseco.rs/v1/content/reponame/';
+let baseUrl = 'http://demo.dbranch.asseco.rs';
+let contentUrl = new URL('/v1/content/reponame/', baseUrl);
 let paths = new Array('');
 let currentPage = 1, totalPages = 1;
 let selectedItem = null;
@@ -88,7 +89,7 @@ function generateCurrentFolderItems(data) {
         .children('.download-button')
         .on('click', () => {
           let name = decodeURIComponent(item.name);
-          openInNewTab(baseUrl + paths.slice(1, paths.length).join('/') + '/' + name);
+          openInNewTab(contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + name);
         });
     }
     $(folderItemElement).on('click', (e) => {
@@ -105,7 +106,7 @@ function generateCurrentFolderItems(data) {
  * @param {number} folderId Folder id to be deleted
  */
 async function deleteFolder(folderId) {
-  let response = await fetch(baseUrl + '/folders' + folderId, {
+  let response = await fetch(contentUrl.href + '/folders' + folderId, {
     headers: {
       Accept: '*/*',
       Authorization: `Bearer ${token}`,
@@ -167,7 +168,7 @@ function openInNewTab(url) {
  * @param {File} file Input file to be uploaded
  */
 async function uploadDocumentToCurrentFolder(file, fillingPurpose, filingCaseNumber) {
-  let response = await fetch(baseUrl + paths.join('/') + '/metadata');
+  let response = await fetch(contentUrl.href + paths.join('/') + '/metadata');
   let metadata = await response.json();
   console.log(metadata.id);
   currentFolderId = metadata.id;
@@ -183,7 +184,7 @@ async function uploadDocumentToCurrentFolder(file, fillingPurpose, filingCaseNum
   formData.set('filing-case-number', filingCaseNumber);
   formData.set('overwrite-if-exists', true);
 
-  let uploadResponse = fetch(baseUrl + 'folders/' + currentFolderId, {
+  let uploadResponse = fetch(contentUrl.href + 'folders/' + currentFolderId, {
     method: 'POST',
     headers: {
       Accept: '*/*',
