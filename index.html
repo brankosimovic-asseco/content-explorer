@@ -16,15 +16,16 @@
         <div class="breadcrumbz"></div>
       </div>
       <div class="navigation">
-        <img style="cursor:pointer" id="up" width="28" src="assets/up-arrow.svg" >
         <div style="display:flex; gap: 0.5rem; align-items: center;" >
-          <img id="back-button" width="28" src="assets/prev-arrow.svg" alt="">
+          <img  style="cursor:pointer" id="up" width="28" src="assets/arrow.svg" >
+          <img id="back-button" style=" transform: rotate(-90deg);" width="28" src="assets/arrow.svg" alt="">
           <span id="page-info">1/1</span> 
-          <img id="forward-button" width="28" src="assets/next-arrow.svg" >
-          
+          <img id="forward-button" style=" transform: rotate(90deg);" width="28" src="assets/arrow.svg" >
+          <div style="display: flex; align-items: center;">
+            <img style="position: absolute; padding: 0.25rem 0.5rem;" src="assets/upload-icon.svg" width="18px" alt="" srcset="">
+            <button class="upload-button">Upload file</button>
+          </div>
         </div>
-        <img id="info" width="28" src="assets/info.svg" >
-        <img id="delete" width="28" src="assets/delete.svg" >
         <img id="loader" class="loader" src="assets/loading.svg" width="28" alt="">
       </div>
       <div class="container">
@@ -47,7 +48,6 @@
       </div>
     </div>
    
-    <img class="upload-button" src="assets/upload.svg" width="48px" alt="">
   </body>
   <input type="file" hidden id="upload-field">
 </html>
