@@ -52,7 +52,7 @@ function generateCurrentFolderItems(data) {
   data.items.forEach((item) => {
     let folderIconElementString = '';
 
-    const optionsButtonString = `<div tabindex="0" class="menu-button">
+    const optionsButtonString = `<div tabindex="1" class="menu-button" >
       <img src="assets/more.svg" width="14" alt="">
     </div>`;
 
@@ -72,7 +72,7 @@ function generateCurrentFolderItems(data) {
 
     const folderItemString = `
         <div class="item" tabindex="0">
-            ${folderIconElementString} ${optionsButtonString}  
+            ${folderIconElementString} <div class="menu"  tabindex="1" id="${item.id}" >${optionsButtonString}</div> 
             <div title="${item.name}" class="item-text">${name}</div>
         </div>`;
 
@@ -90,13 +90,46 @@ function generateCurrentFolderItems(data) {
         });
     }
     $(folderItemElement)
-      .children('.menu-button')
+      .find('.menu-button')
       .on('click', (e) => {
-        console.log(item, 'menu item toggled!');
+        if ($(`#${item.id} `).children('.dropdown').length) {
+          $(`#${item.id} `).children('.dropdown').remove();
+        } else {
+          openItemOptions(item);
+        }
+
+      })
+      .on('blur', () => {
+        console.log('blur event on', item.id);
+        $(`#${item.id} `).children().first().css({ filter: '' });
+        $(`#${item.id} `).children('.dropdown').remove();
       });
 
     $('.container').append(folderItemElement);
   });
+}
+
+function openItemOptions(item) {
+  $(`#${item.id} `)
+    .children()
+    .first()
+    .css({ filter: 'opacity(1)', filter: 'drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329))' });
+  //create dropdown menu
+  let dropdownElement = $.parseHTML(`<div class="dropdown"></div>`);
+
+  let options = ['Delete', 'Information'];
+
+  if (item.kind === 'document') options.push('Download');
+
+  options.forEach((option) => {
+    // draw option in dropdown menu
+    $(dropdownElement).append(`<div class="option-item">${option}</div>`);
+  });
+
+  // only the current menu
+  $(`#${item.id}`).append(dropdownElement);
+  // set dropdown element to be the child of the menu button
+  // once we lose focus of the dropdown it is removed from the DOM tree
 }
 
 /**

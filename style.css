@@ -24,6 +24,32 @@ header {
     font-weight: bold;
 }
 
+.dropdown {
+    margin-top: 1.75rem;
+    position: absolute;
+    padding: 0.5rem 0.5rem;
+    background-color: white;
+    box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.212);
+}
+
+.option-item:first-child {
+    font-weight: bold;
+    color: red;
+}
+
+.option-item {
+    font-size: smaller;
+    font-family: 'Heebo', sans-serif;
+    color: #393939;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.option-item:hover {
+    background-color: rgba(0, 4, 255, 0.075);
+}
+
 .navigation {
     display: flex;
     gap: 1rem;
@@ -130,13 +156,17 @@ header {
 
 .upload-button > * {
     pointer-events: none;
-  }
+}
+
+.menu {
+    margin-top: 2px;
+    margin-left: 1.3rem;
+    position: absolute;
+}
 
 .menu-button {
     position: absolute;
-    z-index: 5;
-    margin-top: 0px;
-    margin-left: 3.3rem;
+    z-index: 6;
     background-color: rgb(255, 255, 255);
     border-radius: 4px;
     width: 16px;
@@ -149,10 +179,6 @@ header {
 }
 
 .menu-button:hover {
-    filter: opacity(1);
-    filter: drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329));
-}
-.menu-button:focus {
     filter: opacity(1);
     filter: drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329));
 }
