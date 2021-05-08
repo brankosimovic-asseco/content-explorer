@@ -1,6 +1,7 @@
 let baseUrl = 'http://demo.dbranch.asseco.rs';
 let contentUrl = new URL('/v1/content/reponame/', baseUrl);
 let paths = new Array('');
+let pageSize = 40;
 let currentPage = 1,
   totalPages = 1;
 let selectedItem = null;
@@ -81,14 +82,8 @@ function generateCurrentFolderItems(data) {
       $(folderItemElement).on('dblclick', () => {
         getFolderItems(item, true);
       });
-    } else {
-      $(folderItemElement)
-        .children('.download-button')
-        .on('click', () => {
-          let name = decodeURIComponent(item.name);
-          openInNewTab(contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + name);
-        });
     }
+
     $(folderItemElement)
       .find('.menu-button')
       .on('click', (e) => {
@@ -97,39 +92,57 @@ function generateCurrentFolderItems(data) {
         } else {
           openItemOptions(item);
         }
-
-      })
-      .on('blur', () => {
-        console.log('blur event on', item.id);
-        $(`#${item.id} `).children().first().css({ filter: '' });
-        $(`#${item.id} `).children('.dropdown').remove();
       });
-
     $('.container').append(folderItemElement);
   });
 }
 
+/**
+ * Open dropdown for item to download, delete or open info
+ * @param {Object} item Folder or document item to set options
+ */
 function openItemOptions(item) {
+  // display the dropdown when we click the dropdown button
   $(`#${item.id} `)
     .children()
     .first()
     .css({ filter: 'opacity(1)', filter: 'drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329))' });
-  //create dropdown menu
-  let dropdownElement = $.parseHTML(`<div class="dropdown"></div>`);
 
-  let options = ['Delete', 'Information'];
+  let dropdownElement = $.parseHTML(`<div tabindex="1" class="dropdown"></div>`);
 
-  if (item.kind === 'document') options.push('Download');
-
-  options.forEach((option) => {
-    // draw option in dropdown menu
-    $(dropdownElement).append(`<div class="option-item">${option}</div>`);
+  $(dropdownElement).on('blur', () => {
+    console.log('blur event on', item.id);
+    $(`#${item.id} `).children().first().css({ filter: '' });
+    $(`#${item.id} `).children('.dropdown').remove();
   });
 
-  // only the current menu
+  let options = ['Delete', 'Information'];
+  if (item.kind === 'document') options.push('Download');
+
+  // add all the options depending on type
+  options.forEach((option) => {
+    let optionItemElement = $.parseHTML(`<div class="option-item">${option}</div>`);
+
+    $(optionItemElement).on('click', (e) => {
+      if (option === 'Download') {
+        let name = decodeURIComponent(item.name);
+        openInNewTab(contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + name);
+      } else if (option === 'Delete') {
+        if (item.kind === 'folder') {
+          deleteFolder(item.id);
+        } else {
+          deleteDocument(item.id);
+        }
+      } else if (option === 'Information') {
+        // Call metadata function
+      }
+    });
+
+    $(dropdownElement).append(optionItemElement);
+  });
+
   $(`#${item.id}`).append(dropdownElement);
-  // set dropdown element to be the child of the menu button
-  // once we lose focus of the dropdown it is removed from the DOM tree
+  $(dropdownElement).focus();
 }
 
 /**
@@ -137,7 +150,24 @@ function openItemOptions(item) {
  * @param {number} folderId Folder id to be deleted
  */
 async function deleteFolder(folderId) {
-  let response = await fetch(contentUrl.href + '/folders' + folderId, {
+  let response = await fetch(contentUrl.href + '/folders' + folderId + '?delete-content-and-subfolders=true', {
+    headers: {
+      Accept: '*/*',
+      Authorization: `Bearer ${token}`,
+    },
+    method: 'DELETE',
+  });
+
+  console.log(response);
+  getFolderItems(paths[paths.length - 1]);
+}
+
+/**
+ * Delete selected document
+ * @param {number} documentId id of document to be deleted
+ */
+async function deleteDocument(documentId) {
+  let response = await fetch(contentUrl.href + '/documents' + documentId, {
     headers: {
       Accept: '*/*',
       Authorization: `Bearer ${token}`,
@@ -171,7 +201,7 @@ async function getFolderItems(folder, levelChange) {
     paths = (folder.path + (folder.path === '/' ? '' : '/') + folder.name).split('/');
     url.pathname += paths.slice(1, paths.indexOf(folder.name) + 1).join('/');
   }
-  url.searchParams.append('page-size', '40');
+  url.searchParams.append('page-size', pageSize);
   url.searchParams.append('page', currentPage.toString());
   const response = await fetch(url.href);
   const data = await response.json();
@@ -182,8 +212,8 @@ async function getFolderItems(folder, levelChange) {
 }
 
 function goUp() {
-  paths.pop();
   currentPage = 1;
+  paths.pop();
   getFolderItems(paths[paths.length - 1]);
 }
 

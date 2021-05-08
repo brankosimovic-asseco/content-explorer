@@ -26,6 +26,7 @@ header {
 
 .dropdown {
     margin-top: 1.75rem;
+    z-index: 10;
     position: absolute;
     padding: 0.5rem 0.5rem;
     background-color: white;
@@ -154,13 +155,26 @@ header {
     cursor: pointer;
 }
 
+.button-base {
+    all: unset;
+    flex-grow: 1;
+    text-align: center;
+    color: white;
+    background-color: #687492;
+    padding: 0.30rem 1rem;
+    font-size: small;
+    font-weight: bold;
+    font-family: 'Heebo';
+    cursor: pointer;
+}
+
 .upload-button > * {
     pointer-events: none;
 }
 
 .menu {
     margin-top: 2px;
-    margin-left: 1.3rem;
+    margin-left: 1.6rem;
     position: absolute;
 }
 
@@ -187,12 +201,13 @@ header {
 .dialog {
     display: none;
     position: absolute;
-    z-index: 3;
+    z-index: 11;
     top: 50%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
     width: 300px;
+    box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.212);
     background-color: white;
 
 }
@@ -205,6 +220,14 @@ header {
     gap: 0.5rem;
 }
 
+.dialog-content > input {
+    all: unset;
+    font-size: small;
+    background-color: whitesmoke;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+}
+
 #overlay {
     position: fixed; /* Sit on top of the page content */
     display: none; /* Hidden by default */
@@ -214,7 +237,7 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.308); /* Black background with opacity */
+    background-color: rgba(0, 0, 0, 0.11); /* Black background with opacity */
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    cursor: pointer; /* Add a pointer on hover */
+    cursor: initial; /* Add a pointer on hover */
   }
