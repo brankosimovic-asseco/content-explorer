@@ -77,7 +77,7 @@ header {
 }
 
 .breadcrumbz > div::after {
-    content: '>';
+    content: '/';
     padding: 8px;
 }
 .path {
