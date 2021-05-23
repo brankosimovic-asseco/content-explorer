@@ -13,6 +13,7 @@ header {
 .info-row {
     display: flex;
     font-size: small;
+   
 }
 
 .label {

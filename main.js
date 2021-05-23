@@ -139,7 +139,8 @@ function openItemOptions(item) {
         getItemMetadata(item).then((itemMetadata) => {
           $('#dialog').empty();
           Object.entries(itemMetadata).forEach(([key, value]) => {
-            $('#dialog').append(`<div class="info-row"><div class="label">${key}</div>:<div>${value}</div></div>`);
+            if (typeof value === 'object') value = JSON.stringify(value);
+            $('#dialog').append(`<div class="info-row"><div class="label">${key}:</div> <div>${value}</div></div>`);
           });
         });
       }
@@ -206,7 +207,7 @@ async function getItemMetadata(item) {
  */
 async function getFolderItems(folder, levelChange) {
   $('.loader').css('display', 'initial');
-
+  $('#dialog').dialog('close');
   let url = new URL('/v1/content/reponame/', baseUrl);
   // reset the current page in case we are on
   // a page that is > 1 and switch to a level
