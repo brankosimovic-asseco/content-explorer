@@ -193,7 +193,7 @@ async function deleteDocument(documentId) {
  */
 async function getItemMetadata(item) {
   console.log(paths.join('/'));
-  let respone = await fetch(contentUrl.href + paths.join('/') + '/' + item.name + '/metadata');
+  let respone = await fetch(contentUrl.href + paths.filter((p) => p !== '').join('/') + '/' + item.name + '/metadata');
   let metadata = await respone.json();
 
   return metadata;
