@@ -10,6 +10,22 @@ header {
     font-size: 22px;
 }
 
+.info-dialog {
+    display: table;
+}
+
+.info-row {
+    display: table-row;
+    font-size: small;
+   
+}
+
+.label {
+    text-align: end;
+    display: table-cell;
+    padding-right: 0.25rem;
+    color: gray;
+}
 .container {
     display: flex;
     flex-direction: row;
@@ -77,7 +93,7 @@ header {
 }
 
 .breadcrumbz > div::after {
-    content: '>';
+    content: '/';
     padding: 8px;
 }
 .path {
@@ -196,48 +212,3 @@ header {
     filter: opacity(1);
     filter: drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329));
 }
-
-
-.dialog {
-    display: none;
-    position: absolute;
-    z-index: 11;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.212);
-    background-color: white;
-
-}
-
-.dialog-content {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    margin: 0.5rem;
-    gap: 0.5rem;
-}
-
-.dialog-content > input {
-    all: unset;
-    font-size: small;
-    background-color: whitesmoke;
-    padding: 0.5rem 1rem;
-    border-radius: 0.3rem;
-}
-
-#overlay {
-    position: fixed; /* Sit on top of the page content */
-    display: none; /* Hidden by default */
-    width: 100%; /* Full width (cover the whole page) */
-    height: 100%; /* Full height (cover the whole page) */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.11); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    cursor: initial; /* Add a pointer on hover */
-  }

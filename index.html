@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+    integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="main.js"></script>
     <link rel="stylesheet" href="style.css" />
@@ -31,18 +36,16 @@
       <div class="container">
         
       </div>
-      <div class="dialog">
-        <div class="dialog-content">
-          <h4 style="margin: 0.25rem; margin-bottom: 1rem; color: rgb(68, 68, 68);">Add additional information</h4>
-          <input id="filling-purpose" placeholder="Filing purpose" type="text">
-          <input id="filling-case-number" placeholder="Filing case number" type="text">
-          <div style="display: flex; gap: 0.5rem; justify-content: space-between; margin-top: 1rem;">
-            <button class="button-base" id="upload">Upload</button>
-            <button class="button-base" id="close-upload">Cancel</button>
-          </div>
 
+      <div hidden id="upload-dialog" title="Upload file">
+        <div style="gap: 0.5rem; display: flex; flex-direction: column;">
+          <input placeholder="Filling purpose" id="filling-purpose" type="text">
+          <input placeholder="Filling case number" id="filling-case-number" type="text">
         </div>
 
+      </div>
+
+      <div id="dialog" class="info-dialog" title="Information">
       </div>
 
       </div>

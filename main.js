@@ -6,12 +6,38 @@ let currentPage = 1,
   totalPages = 1;
 let selectedItem = null;
 let currentFolderId = -1;
-let token = `eyJhbGciOiJSUzI1NiIsImtpZCI6IkI1Q0MxMTdBRjdGNTNFNEY3RDg0NDZDMkE0M0VEOTY0NTBCNTc3NzBSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6InRjd1JldmYxUGs5OWhFYkNwRDdaWkZDMWQzQSJ9.eyJuYmYiOjE2MjAyMjY1MTMsImV4cCI6MTYyMDI1NTMxMywiaXNzIjoiaHR0cDovL2RlbW8uZGJyYW5jaC5hc3NlY28ucnMvdjEvYXV0aGVudGljYXRpb24iLCJhdWQiOlsiYnBtIiwiY29uZmlndXJhdGlvbiIsImNvbW1lbnRzIiwiY29yZS1pbnRlZ3JhdGlvbiIsIm9mZmVyIiwiY29udGVudCIsImRlY2lzaW9uIiwiZG9jdW1lbnQtY29tcG9zaXRpb24iLCJkaXJlY3RvcnkiXSwiY2xpZW50X2lkIjoic2hlbGwtdWkiLCJzdWIiOiI3MTNhYzM3My0zMzcyLTRkN2EtODUwNy00MjA1MTI2ZGNkMzgiLCJhdXRoX3RpbWUiOjE2MjAyMjY1MTMsImlkcCI6ImRlZmF1bHQiLCJyb2xlIjpbIk9wZXJhdGlvbiBvZmZpY2VyLDAwMDEiLCJCcmFuY2ggbWFuYWdlciwwMDAxIiwiUmVsYXRpb25zaGlwIG1hbmFnZXIiLCJVbmRlcndyaXRlciIsIkhlYWQgb2YgdW5kZXJ3cml0aW5nIiwiQWRtaW4sMDAwMSIsIkNyZWRpdCBBZG1pbiJdLCJtYWluX29yZ2FuaXphdGlvbl91bml0IjoiMDAwMSIsInVzZXJfdHlwZSI6IkFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYnJhbmtvLnNpbW92aWMiLCJzY29wZSI6WyJvcGVuaWQiLCJwcm9maWxlIiwiYnBtIiwiY29uZmlndXJhdGlvbiIsImNvbW1lbnRzIiwiY29yZS1pbnRlZ3JhdGlvbiIsIm9mZmVyIiwiY29udGVudCIsImRlY2lzaW9uIiwiZG9jdW1lbnQtY29tcG9zaXRpb24iLCJkaXJlY3RvcnkiXSwiYW1yIjpbImV4dGVybmFsIl19.ewMEhLjPwAHpUQyP8UxrQOPxC_ONxUPbsNqnXPFc9F205mz-AbKLgMKdUvr_LBHxa7OlmTCSBofE07T57g5m-fJRHmOpWk9fRTYgBCtLWcUr8raF5oG6nUq4p4MYlznPkY294xIcZqxXofOHtQyaCus5Dy5-PJuNYpvbwI7r5qqqpErSjyEPhhrTbPoBjyi1nQdU26HeAVPiafCZhuX_sFH3beXUW2VYUvIu-bNTWCc_A-bKBWayTvLCjVmnE6FHNB0N4l1q_QnxnllMGmVb0Jfg7N2glmkS_TSZcpzih3dl1k6nV0u6WBCt3sGRSIbHBW4aqEbwcRS65_KkSRmljQ`;
+let token = '';
 
 $(document).ready(() => {
+  setupDialogs();
   getFolderItems('');
   setEventListeners();
 });
+
+function setupDialogs() {
+  $('#dialog').dialog({ autoOpen: false });
+  $('#upload-dialog').dialog({
+    autoOpen: false,
+    modal: true,
+    height: 'auto',
+    resizable: false,
+    buttons: {
+      Upload: function () {
+        // Do something
+        const selectedFile = document.querySelector('input[type="file"]').files[0];
+        // get metadata info from input dialog form
+        const fp = $('#filling-purpose').val();
+        const fcn = $('#filling-case-number').val();
+        // pass it into the upload function
+        uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
+        $(this).dialog('close');
+      },
+      Cancel: function () {
+        $(this).dialog('close');
+      },
+    },
+  });
+}
 
 function generateBreadcrumbs() {
   let breadCrumbs = $('.breadcrumbz').first();
@@ -111,7 +137,6 @@ function openItemOptions(item) {
   let dropdownElement = $.parseHTML(`<div tabindex="1" class="dropdown"></div>`);
 
   $(dropdownElement).on('blur', () => {
-    console.log('blur event on', item.id);
     $(`#${item.id} `).children().first().css({ filter: '' });
     $(`#${item.id} `).children('.dropdown').remove();
   });
@@ -134,7 +159,15 @@ function openItemOptions(item) {
           deleteDocument(item.id);
         }
       } else if (option === 'Information') {
-        // Call metadata function
+        getItemMetadata(item).then((itemMetadata) => {
+          $('#dialog').empty();
+          $('#dialog').dialog({ width: 'auto', height: 'auto' });
+          Object.entries(itemMetadata).forEach(([key, value]) => {
+            if (typeof value === 'object') value = JSON.stringify(value);
+            $('#dialog').append(`<div class="info-row"><div class="label">${key}:</div> <div>${value}</div></div>`);
+            $('#dialog').dialog('open');
+          });
+        });
       }
     });
 
@@ -180,13 +213,25 @@ async function deleteDocument(documentId) {
 }
 
 /**
+ * Gets folder or file information of the selected item
+ * @param {Object} item Folder or file item in focus
+ * @returns metadata of the input item
+ */
+async function getItemMetadata(item) {
+  let respone = await fetch(contentUrl.href + item.kind + 's/' + item.id + '/metadata');
+  let metadata = await respone.json();
+
+  return metadata;
+}
+
+/**
  * Get items for selected folder
  * @param {(string | Object)} folder Can be a folder name or a folder object
  * @param {boolean} levelChange Indicates if we are changing to another level
  */
 async function getFolderItems(folder, levelChange) {
   $('.loader').css('display', 'initial');
-
+  $('#dialog').dialog('close');
   let url = new URL('/v1/content/reponame/', baseUrl);
   // reset the current page in case we are on
   // a page that is > 1 and switch to a level
@@ -296,28 +341,11 @@ function setEventListeners() {
     $('#upload-field').click();
   });
 
+  $('#upload-field').change((e) => {
+    $('#upload-dialog').dialog('open');
+  });
+
   $('.delete').on('click', (e) => {
     deleteFolder(selectedItem.id);
-  });
-
-  $('#upload').on('click', () => {
-    const selectedFile = document.querySelector('input[type="file"]').files[0];
-    // get metadata info from input dialog form
-    const fp = $('#filling-purpose').val();
-    const fcn = $('#filling-case-number').val();
-    // pass it into the upload function
-    uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
-    $('.dialog').css('display', 'none');
-    $('#overlay').css('display', 'none');
-  });
-
-  $('#upload-field').change(() => {
-    $('.dialog').css('display', 'initial');
-    $('#overlay').css('display', 'initial');
-  });
-
-  $('#close-upload').on('click', () => {
-    $('.dialog').css('display', 'none');
-    $('#overlay').css('display', 'none');
   });
 }
