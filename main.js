@@ -9,6 +9,7 @@ let currentFolderId = -1;
 let token = '';
 
 $(document).ready(() => {
+  $('#dialog').dialog({ autoOpen: false });
   getFolderItems('');
   setEventListeners();
 });
@@ -134,7 +135,13 @@ function openItemOptions(item) {
           deleteDocument(item.id);
         }
       } else if (option === 'Information') {
-        // Call metadata function
+        $('#dialog').dialog('open');
+        getItemMetadata(item).then((itemMetadata) => {
+          $('#dialog').empty();
+          Object.entries(itemMetadata).forEach(([key, value]) => {
+            $('#dialog').append(`<div class="info-row"><div class="label">${key}</div>:<div>${value}</div></div>`);
+          });
+        });
       }
     });
 
@@ -177,6 +184,19 @@ async function deleteDocument(documentId) {
 
   console.log(response);
   getFolderItems(paths[paths.length - 1]);
+}
+
+/**
+ * Gets folder or file information of the selected item
+ * @param {Object} item Folder or file item in focus
+ * @returns metadata of the input item
+ */
+async function getItemMetadata(item) {
+  console.log(paths.join('/'));
+  let respone = await fetch(contentUrl.href + paths.join('/') + '/' + item.name + '/metadata');
+  let metadata = await respone.json();
+
+  return metadata;
 }
 
 /**
@@ -307,17 +327,17 @@ function setEventListeners() {
     const fcn = $('#filling-case-number').val();
     // pass it into the upload function
     uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
-    $('.dialog').css('display', 'none');
+    $('#upload-dialog').css('display', 'none');
     $('#overlay').css('display', 'none');
   });
 
   $('#upload-field').change(() => {
-    $('.dialog').css('display', 'initial');
+    $('#upload-dialog').css('display', 'initial');
     $('#overlay').css('display', 'initial');
   });
 
   $('#close-upload').on('click', () => {
-    $('.dialog').css('display', 'none');
+    $('#upload-dialog').css('display', 'none');
     $('#overlay').css('display', 'none');
   });
 }
