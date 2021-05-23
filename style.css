@@ -10,14 +10,20 @@ header {
     font-size: 22px;
 }
 
+.info-dialog {
+    display: table;
+}
+
 .info-row {
-    display: flex;
+    display: table-row;
     font-size: small;
    
 }
 
 .label {
-    font-weight: bold;
+    text-align: end;
+    display: table-cell;
+    padding-right: 0.25rem;
     color: gray;
 }
 .container {

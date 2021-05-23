@@ -9,10 +9,35 @@ let currentFolderId = -1;
 let token = '';
 
 $(document).ready(() => {
-  $('#dialog').dialog({ autoOpen: false });
+  setupDialogs();
   getFolderItems('');
   setEventListeners();
 });
+
+function setupDialogs() {
+  $('#dialog').dialog({ autoOpen: false });
+  $('#upload-dialog').dialog({
+    autoOpen: false,
+    modal: true,
+    height: 'auto',
+    resizable: false,
+    buttons: {
+      Upload: function () {
+        // Do something
+        const selectedFile = document.querySelector('input[type="file"]').files[0];
+        // get metadata info from input dialog form
+        const fp = $('#filling-purpose').val();
+        const fcn = $('#filling-case-number').val();
+        // pass it into the upload function
+        uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
+        $(this).dialog('close');
+      },
+      Cancel: function () {
+        $(this).dialog('close');
+      },
+    },
+  });
+}
 
 function generateBreadcrumbs() {
   let breadCrumbs = $('.breadcrumbz').first();
@@ -112,7 +137,6 @@ function openItemOptions(item) {
   let dropdownElement = $.parseHTML(`<div tabindex="1" class="dropdown"></div>`);
 
   $(dropdownElement).on('blur', () => {
-    console.log('blur event on', item.id);
     $(`#${item.id} `).children().first().css({ filter: '' });
     $(`#${item.id} `).children('.dropdown').remove();
   });
@@ -135,12 +159,13 @@ function openItemOptions(item) {
           deleteDocument(item.id);
         }
       } else if (option === 'Information') {
-        $('#dialog').dialog('open');
         getItemMetadata(item).then((itemMetadata) => {
           $('#dialog').empty();
+          $('#dialog').dialog({ width: 'auto', height: 'auto' });
           Object.entries(itemMetadata).forEach(([key, value]) => {
             if (typeof value === 'object') value = JSON.stringify(value);
             $('#dialog').append(`<div class="info-row"><div class="label">${key}:</div> <div>${value}</div></div>`);
+            $('#dialog').dialog('open');
           });
         });
       }
@@ -193,8 +218,7 @@ async function deleteDocument(documentId) {
  * @returns metadata of the input item
  */
 async function getItemMetadata(item) {
-  console.log(paths.join('/'));
-  let respone = await fetch(contentUrl.href + paths.filter((p) => p !== '').join('/') + '/' + item.name + '/metadata');
+  let respone = await fetch(contentUrl.href + item.kind + 's/' + item.id + '/metadata');
   let metadata = await respone.json();
 
   return metadata;
@@ -317,28 +341,11 @@ function setEventListeners() {
     $('#upload-field').click();
   });
 
+  $('#upload-field').change((e) => {
+    $('#upload-dialog').dialog('open');
+  });
+
   $('.delete').on('click', (e) => {
     deleteFolder(selectedItem.id);
-  });
-
-  $('#upload').on('click', () => {
-    const selectedFile = document.querySelector('input[type="file"]').files[0];
-    // get metadata info from input dialog form
-    const fp = $('#filling-purpose').val();
-    const fcn = $('#filling-case-number').val();
-    // pass it into the upload function
-    uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
-    $('#upload-dialog').css('display', 'none');
-    $('#overlay').css('display', 'none');
-  });
-
-  $('#upload-field').change(() => {
-    $('#upload-dialog').css('display', 'initial');
-    $('#overlay').css('display', 'initial');
-  });
-
-  $('#close-upload').on('click', () => {
-    $('#upload-dialog').css('display', 'none');
-    $('#overlay').css('display', 'none');
   });
 }
