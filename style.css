@@ -40,6 +40,13 @@ header {
     font-weight: bold;
 }
 
+.env-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: fit-content;
+} 
+
 .dropdown {
     margin-top: 1.75rem;
     z-index: 10;

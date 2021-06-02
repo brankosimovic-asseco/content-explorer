@@ -9,10 +9,19 @@ let currentFolderId = -1;
 let token = '';
 
 $(document).ready(() => {
+  setEnviromentVariables();
   setupDialogs();
   getFolderItems('');
   setEventListeners();
 });
+
+function setEnviromentVariables() {
+  let auth_token = localStorage.getItem('auth_token');
+  // get token from local storage
+  $('#content-url').val(baseUrl);
+  $('#token').val(auth_token);
+  token = auth_token;
+}
 
 function setupDialogs() {
   $('#dialog').dialog({ autoOpen: false });
@@ -30,6 +39,27 @@ function setupDialogs() {
         const fcn = $('#filling-case-number').val();
         // pass it into the upload function
         uploadDocumentToCurrentFolder(selectedFile, fp, fcn);
+        $(this).dialog('close');
+      },
+      Cancel: function () {
+        $(this).dialog('close');
+      },
+    },
+  });
+  $('#delete-confirm-dialog').dialog({
+    autoOpen: false,
+    modal: true,
+    height: 'auto',
+    resizable: false,
+    buttons: {
+      Delete: function () {
+        // Delete
+        let item = $('#delete-confirm-dialog').data('item');
+        if (item.kind === 'folder') {
+          deleteFolder(item.id);
+        } else {
+          deleteDocument(item.id);
+        }
         $(this).dialog('close');
       },
       Cancel: function () {
@@ -153,11 +183,7 @@ function openItemOptions(item) {
         let name = decodeURIComponent(item.name);
         openInNewTab(contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + name);
       } else if (option === 'Delete') {
-        if (item.kind === 'folder') {
-          deleteFolder(item.id);
-        } else {
-          deleteDocument(item.id);
-        }
+        $('#delete-confirm-dialog').data('item', item).dialog('open');
       } else if (option === 'Information') {
         getItemMetadata(item).then((itemMetadata) => {
           $('#dialog').empty();
@@ -183,7 +209,7 @@ function openItemOptions(item) {
  * @param {number} folderId Folder id to be deleted
  */
 async function deleteFolder(folderId) {
-  let response = await fetch(contentUrl.href + '/folders' + folderId + '?delete-content-and-subfolders=true', {
+  let response = await fetch(contentUrl.href + 'folders/' + folderId + '?delete-content-and-subfolders=true', {
     headers: {
       Accept: '*/*',
       Authorization: `Bearer ${token}`,
@@ -200,7 +226,7 @@ async function deleteFolder(folderId) {
  * @param {number} documentId id of document to be deleted
  */
 async function deleteDocument(documentId) {
-  let response = await fetch(contentUrl.href + '/documents' + documentId, {
+  let response = await fetch(contentUrl.href + 'documents/' + documentId, {
     headers: {
       Accept: '*/*',
       Authorization: `Bearer ${token}`,
@@ -347,5 +373,20 @@ function setEventListeners() {
 
   $('.delete').on('click', (e) => {
     deleteFolder(selectedItem.id);
+  });
+
+  $('#content-url').change((e) => {
+    baseUrl = $('#content-url').val();
+    console.log('changed to: ', baseUrl);
+  });
+
+  $('#token').on('change', (e) => {
+    token = $('#token').val();
+    localStorage.setItem('auth_token', token);
+  });
+
+  $('#paste-token').on('click', async () => {
+    const copied_token = await navigator.clipboard.readText();
+    $('#token').val(copied_token);
   });
 }
