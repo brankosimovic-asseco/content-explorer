@@ -39,7 +39,6 @@ header {
     color: gray;
     font-weight: bold;
 }
-
 .env-settings {
     display: flex;
     flex-direction: column;

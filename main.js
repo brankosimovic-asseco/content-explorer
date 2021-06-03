@@ -118,7 +118,7 @@ function generateCurrentFolderItems(data) {
         folderIconElementString = `<img src="assets/folder.svg" width="48" alt="">`;
         break;
       case 'document':
-        folderIconElementString = `<div><img src="${getDocumentType(item)}" width="48" alt=""></div>`;
+        folderIconElementString = `<div><img src="${getDocumentType(item)}" width="48" height="48" alt=""></div>`;
         break;
       default:
         break;
@@ -184,6 +184,11 @@ function openItemOptions(item) {
         openInNewTab(contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + name);
       } else if (option === 'Delete') {
         $('#delete-confirm-dialog').data('item', item).dialog('open');
+        if (item.kind === 'folder') {
+          $('#folder-warn').html('Warning, you are about to delete all subfolders and its contents!');
+        } else {
+          $('#folder-warn').html('');
+        }
       } else if (option === 'Information') {
         getItemMetadata(item).then((itemMetadata) => {
           $('#dialog').empty();
@@ -334,7 +339,7 @@ async function uploadDocumentToCurrentFolder(file, fillingPurpose, filingCaseNum
 function getDocumentType(item) {
   let iconPath = '';
   if (item['media-type'].split('/')[0] === 'image') {
-    iconPath = 'assets/image.svg';
+    iconPath = contentUrl.href + paths.slice(1, paths.length).join('/') + '/' + item.name;
   } else {
     iconPath = 'assets/doc.svg';
   }
