@@ -7,6 +7,16 @@ let currentPage = 1,
 let selectedItem = null;
 let currentFolderId = -1;
 let token = '';
+let envList = [
+  {
+    name: 'DBRANCH',
+    value: 'http://demo.dbranch.asseco.rs',
+  },
+  {
+    name: 'CIF',
+    value: 'http://demo.cif.dbranch.asseco.rs',
+  },
+];
 
 $(document).ready(() => {
   setEnviromentVariables();
@@ -16,9 +26,13 @@ $(document).ready(() => {
 });
 
 function setEnviromentVariables() {
+  envList?.forEach((env) => {
+    $('#content-url').append(`<option value="${env.value}">${env.name}</option>`);
+  });
+
   let auth_token = localStorage.getItem('auth_token');
   // get token from local storage
-  $('#content-url').val(baseUrl);
+  $('#content-url').val(localStorage.getItem('sel_env') ?? baseUrl);
   $('#token').val(auth_token);
   token = auth_token;
 }
@@ -161,7 +175,6 @@ function generateCurrentFolderItems(data) {
  * @param {Object} item Folder or document item to set options
  */
 function openItemOptions(item) {
-  console.log(item);
   // display the dropdown when we click the dropdown button
   $(`#${idParser(item.id)}`)
     .children()
@@ -213,7 +226,7 @@ function openItemOptions(item) {
     });
     $(dropdownElement).append(optionItemElement);
   });
-  // console.log($(`#${item.id}`).html(), 'html');
+
   $(`#${idParser(item.id)}`).append(dropdownElement);
   $(dropdownElement).focus();
 }
@@ -392,8 +405,10 @@ function setEventListeners() {
   });
 
   $('#content-url').change((e) => {
+    const env = $('#content-url option:selected').val();
+    localStorage.setItem('sel_env', env);
     baseUrl = $('#content-url').val();
-    getFolderItems(paths[paths.length - 1]);
+    getFolderItems(paths[0]);
     console.log('changed to: ', baseUrl);
   });
 
@@ -408,6 +423,12 @@ function setEventListeners() {
   });
 }
 
+/**
+ * Some html ids have special characters that jquery cannot handle correctly
+ * ie. $('#123.345') -> id = 123 class = 345 instead of id = 123.345
+ * so we parse the id string using this helper method
+ * @returns escaped id string
+ */
 function idParser(myid) {
   return myid.replace(/(:|\.|\[|\]|,|=|@)/g, '\\$1');
 }
