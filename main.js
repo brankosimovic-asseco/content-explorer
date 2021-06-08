@@ -106,7 +106,7 @@ function generateCurrentFolderItems(data) {
     $('.container').append(emptyFolderElement);
   }
 
-  data.items.forEach((item) => {
+  data.items?.forEach((item) => {
     let folderIconElementString = '';
 
     const optionsButtonString = `<div tabindex="1" class="menu-button" >
@@ -143,9 +143,12 @@ function generateCurrentFolderItems(data) {
     $(folderItemElement)
       .find('.menu-button')
       .on('click', (e) => {
-        if ($(`#${item.id} `).children('.dropdown').length) {
-          $(`#${item.id} `).children('.dropdown').remove();
+        if ($(`#${idParser(item.id)}`).children('.dropdown').length) {
+          $(`#${idParser(item.id)}`)
+            .children('.dropdown')
+            .remove();
         } else {
+          console.log('open the dropdown');
           openItemOptions(item);
         }
       });
@@ -158,8 +161,9 @@ function generateCurrentFolderItems(data) {
  * @param {Object} item Folder or document item to set options
  */
 function openItemOptions(item) {
+  console.log(item);
   // display the dropdown when we click the dropdown button
-  $(`#${item.id} `)
+  $(`#${idParser(item.id)}`)
     .children()
     .first()
     .css({ filter: 'opacity(1)', filter: 'drop-shadow(0 0 0.15rem rgba(0, 0, 0, 0.329))' });
@@ -167,8 +171,13 @@ function openItemOptions(item) {
   let dropdownElement = $.parseHTML(`<div tabindex="1" class="dropdown"></div>`);
 
   $(dropdownElement).on('blur', () => {
-    $(`#${item.id} `).children().first().css({ filter: '' });
-    $(`#${item.id} `).children('.dropdown').remove();
+    $(`#${idParser(item.id)}`)
+      .children()
+      .first()
+      .css({ filter: '' });
+    $(`#${idParser(item.id)}`)
+      .children('.dropdown')
+      .remove();
   });
 
   let options = ['Delete', 'Information'];
@@ -176,6 +185,7 @@ function openItemOptions(item) {
 
   // add all the options depending on type
   options.forEach((option) => {
+    contentUrl = new URL('/v1/content/reponame/', baseUrl);
     let optionItemElement = $.parseHTML(`<div class="option-item">${option}</div>`);
 
     $(optionItemElement).on('click', (e) => {
@@ -201,11 +211,10 @@ function openItemOptions(item) {
         });
       }
     });
-
     $(dropdownElement).append(optionItemElement);
   });
-
-  $(`#${item.id}`).append(dropdownElement);
+  // console.log($(`#${item.id}`).html(), 'html');
+  $(`#${idParser(item.id)}`).append(dropdownElement);
   $(dropdownElement).focus();
 }
 
@@ -249,6 +258,7 @@ async function deleteDocument(documentId) {
  * @returns metadata of the input item
  */
 async function getItemMetadata(item) {
+  contentUrl = new URL('/v1/content/reponame/', baseUrl);
   let respone = await fetch(contentUrl.href + item.kind + 's/' + item.id + '/metadata');
   let metadata = await respone.json();
 
@@ -264,6 +274,7 @@ async function getFolderItems(folder, levelChange) {
   $('.loader').css('display', 'initial');
   $('#dialog').dialog('close');
   let url = new URL('/v1/content/reponame/', baseUrl);
+
   // reset the current page in case we are on
   // a page that is > 1 and switch to a level
   // that has only one page.
@@ -382,6 +393,7 @@ function setEventListeners() {
 
   $('#content-url').change((e) => {
     baseUrl = $('#content-url').val();
+    getFolderItems(paths[paths.length - 1]);
     console.log('changed to: ', baseUrl);
   });
 
@@ -394,4 +406,8 @@ function setEventListeners() {
     const copied_token = await navigator.clipboard.readText();
     $('#token').val(copied_token);
   });
+}
+
+function idParser(myid) {
+  return myid.replace(/(:|\.|\[|\]|,|=|@)/g, '\\$1');
 }
