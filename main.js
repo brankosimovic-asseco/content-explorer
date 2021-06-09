@@ -33,6 +33,7 @@ function setEnviromentVariables() {
   let auth_token = localStorage.getItem('auth_token');
   // get token from local storage
   $('#content-url').val(localStorage.getItem('sel_env') ?? baseUrl);
+  if (localStorage.getItem('sel_env')) baseUrl = localStorage.getItem('sel_env');
   $('#token').val(auth_token);
   token = auth_token;
 }
@@ -132,7 +133,7 @@ function generateCurrentFolderItems(data) {
         folderIconElementString = `<img src="assets/folder.svg" width="48" alt="">`;
         break;
       case 'document':
-        folderIconElementString = `<div><img src="${getDocumentType(item)}" width="48" height="48" alt=""></div>`;
+        folderIconElementString = `<div><img src="${getDocumentType(item)}" height="48" alt=""></div>`;
         break;
       default:
         break;
@@ -408,7 +409,7 @@ function setEventListeners() {
     const env = $('#content-url option:selected').val();
     localStorage.setItem('sel_env', env);
     baseUrl = $('#content-url').val();
-    getFolderItems(paths[0]);
+    getFolderItems(paths[0], true);
     console.log('changed to: ', baseUrl);
   });
 

@@ -23,14 +23,6 @@
         <select style="height: 21px" name="" id="content-url"></select>
         <div style="display: flex; gap: 0.25rem">
           <input placeholder="Token" type="text" name="" id="token" />
-          <img
-            title="Paste from clipboard"
-            id="paste-token"
-            style="cursor: pointer"
-            src="assets/paste.svg"
-            alt=""
-            width="21"
-          />
         </div>
       </div>
       <div style="display: flex; justify-content: flex-start">
@@ -38,10 +30,12 @@
       </div>
       <div class="navigation">
         <div style="display: flex; gap: 0.5rem; align-items: center">
-          <img style="cursor: pointer" id="up" width="28" src="assets/arrow.svg" />
-          <img id="back-button" style="transform: rotate(-90deg)" width="28" src="assets/arrow.svg" alt="" />
+          <img style="cursor: pointer" id="up" width="28" src="assets/arrow_up.svg" />
+          <img style="cursor: pointer" id="forward-start" width="28" src="assets/arrow_forward_start.svg" />
+          <img id="back-button" width="28" src="assets/page_prev.svg" alt="" />
           <span id="page-info">1/1</span>
-          <img id="forward-button" style="transform: rotate(90deg)" width="28" src="assets/arrow.svg" />
+          <img id="forward-button" width="28" src="assets/arrow_next.svg" />
+          <img style="cursor: pointer" id="forward-end" width="28" src="assets/arrow_forward_end.svg" />
           <div style="display: flex; align-items: center">
             <img
               style="position: absolute; padding: 0.25rem 0.5rem"

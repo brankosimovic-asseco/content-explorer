@@ -161,9 +161,8 @@ header {
 }
 
 .loader {
-    animation: loader 2s linear infinite;
+    animation: loader 1s linear infinite;
 }
-
 
 .upload-button {
     
