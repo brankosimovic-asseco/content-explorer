@@ -82,6 +82,22 @@ function setupDialogs() {
       },
     },
   });
+  $('#new-folder-dialog').dialog({
+    autoOpen: false,
+    modal: true,
+    height: 'auto',
+    resizable: false,
+    buttons: {
+      Add: function () {
+        const folderName = $('#folder-name').val();
+        addNewFolder(folderName);
+        $(this).dialog('close');
+      },
+      Cancel: function () {
+        $(this).dialog('close');
+      },
+    },
+  });
 }
 
 function generateBreadcrumbs() {
@@ -230,6 +246,37 @@ function openItemOptions(item) {
 
   $(`#${idParser(item.id)}`).append(dropdownElement);
   $(dropdownElement).focus();
+}
+
+// TODO: Maybe add parameter for id and folder purpose
+
+/**
+ * Adds new folder to current path with specified name
+ * @param {string} folderName
+ */
+async function addNewFolder(folderName) {
+  const folderId = Math.floor(100000 + Math.random() * 900000);
+  const folderBody = {
+    id: folderId,
+    changedOn: new Date(),
+    createdOn: new Date(),
+    name: folderName,
+    kind: 'folder',
+    path: paths.join('/'),
+    folderPurpose: 'generic-folder',
+  };
+  let response = await fetch(contentUrl.href + 'folders/', {
+    headers: {
+      'Accept': '*/*',
+      'Authorization': `Bearer ${token}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(folderBody),
+    method: 'POST',
+  });
+
+  console.log(response);
+  getFolderItems(paths[paths.length - 1]);
 }
 
 /**
@@ -392,13 +439,17 @@ function setEventListeners() {
     }
   });
 
-  $('.upload-button').on('click', (e) => {
+  $('#upload-button').on('click', (e) => {
     $('#upload-field').val('');
     $('#upload-field').click();
   });
 
   $('#upload-field').change((e) => {
     $('#upload-dialog').dialog('open');
+  });
+
+  $('#new-folder').click((e) => {
+    $('#new-folder-dialog').dialog('open');
   });
 
   $('.delete').on('click', (e) => {
@@ -411,6 +462,20 @@ function setEventListeners() {
     baseUrl = $('#content-url').val();
     getFolderItems(paths[0], true);
     console.log('changed to: ', baseUrl);
+  });
+
+  $('#forward-start').on('click', (e) => {
+    if (currentPage !== 1) {
+      currentPage = 1;
+      getFolderItems(paths[paths.length - 1]);
+    }
+  });
+
+  $('#forward-end').on('click', (e) => {
+    if (currentPage !== totalPages) {
+      currentPage = totalPages;
+      getFolderItems(paths[paths.length - 1]);
+    }
   });
 
   $('#token').on('change', (e) => {
