@@ -149,7 +149,8 @@ function generateCurrentFolderItems(data) {
         folderIconElementString = `<img src="assets/folder.svg" width="48" alt="">`;
         break;
       case 'document':
-        folderIconElementString = `<div><img src="${getDocumentType(item)}" height="48" alt=""></div>`;
+        folderIconElementString = `<div style="width: 48px; height: 48px"><img style="max-width:100%;
+        max-height:100%;" src="${getDocumentType(item)}"  alt=""></div>`;
         break;
       default:
         break;
