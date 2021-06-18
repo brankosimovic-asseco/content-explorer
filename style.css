@@ -62,7 +62,7 @@ header {
 
 .option-item {
     font-size: smaller;
-    font-family: 'Heebo', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
     color: #393939;
     padding: 0.25rem 1rem;
     cursor: pointer;
@@ -172,7 +172,7 @@ header {
     padding: 0.30rem 1rem 0.3rem 2rem;
     font-size: small;
     font-weight: bold;
-    font-family: 'Heebo';
+    font-family: 'Fira Sans', sans-serif;
     cursor: pointer;
 }
 
@@ -185,7 +185,7 @@ header {
     padding: 0.30rem 1rem;
     font-size: small;
     font-weight: bold;
-    font-family: 'Heebo';
+    font-family: 'Fira Sans', sans-serif;
     cursor: pointer;
 }
 

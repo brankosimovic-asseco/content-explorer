@@ -16,6 +16,10 @@ let envList = [
     name: 'CIF',
     value: 'http://demo.cif.dbranch.asseco.rs',
   },
+  {
+    name: 'DBRANCH_DEV',
+    value: 'http://dev.dbranch.asseco.rs',
+  },
 ];
 
 $(document).ready(() => {
@@ -256,14 +260,16 @@ function openItemOptions(item) {
  * @param {string} folderName
  */
 async function addNewFolder(folderName) {
+  contentUrl = new URL('/v1/content/reponame/', baseUrl);
   const folderId = Math.floor(100000 + Math.random() * 900000);
+  const path = paths.join('/') === '' ? '/' : paths.join('/');
   const folderBody = {
     id: folderId,
     changedOn: new Date(),
     createdOn: new Date(),
     name: folderName,
     kind: 'folder',
-    path: paths.join('/'),
+    path: path,
     folderPurpose: 'generic-folder',
   };
   let response = await fetch(contentUrl.href + 'folders/', {
