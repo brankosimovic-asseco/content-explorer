@@ -9,7 +9,7 @@ let currentFolderId = -1;
 let token = '';
 let envList = [
   {
-    name: 'DBRANCH',
+    name: 'DBRANCH_DEMO',
     value: 'http://demo.dbranch.asseco.rs',
   },
   {
