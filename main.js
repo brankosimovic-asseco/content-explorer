@@ -1,4 +1,4 @@
-let baseUrl = 'http://demo.dbranch.asseco.rs';
+let baseUrl = 'http://dev.dbranch.asseco.rs';
 let contentUrl = new URL('/v1/content/reponame/', baseUrl);
 let paths = new Array('');
 let pageSize = 40;
